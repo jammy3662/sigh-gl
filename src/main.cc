@@ -1,8 +1,7 @@
-#include <core/defs.h>
+#include "core/defs.h"
 
 #include <libhl/hl.h>
-using namespace HL;
-#include <core/global.h>
+#include "core/global.h"
 
 // header containing named char*'s to shader code
 #include "../res/SHADER.c"
@@ -27,12 +26,16 @@ int main(int argc, char** argv)
 	paintShader.setName("paintShader");
 	paintShader.load(painttestvsShaderCode, painttestfsShaderCode);
 	
-	Texture paintNoise, paintBump;
-	paintNoise.img.loadFile("res/texture/paintnoise.png");
-	//paintNoise.img.load(
+	Texture paintNoise;
+	paintNoise.loadImage(paintnoiseImg);
 	paintNoise.load();
-	paintBump.img.loadFile("res/texture/paintbump.png");
+	
+	Texture paintBump;
+	paintBump.loadImage(paintbumpImg);
 	paintBump.load();
+	
+	Model stage;
+	stage.loadFile("res/mesh/underpass.glb");
 	
 	while (running)
 	{
@@ -42,14 +45,15 @@ int main(int argc, char** argv)
 		calculateDelta();
 		if (!frameStep()) continue;
 		
-		Shader::clear();
+		clearFrame(0.1, 0.1, 0.1, 1);
 		
-		paintShader.use();
+		useShader(&paintShader);
 		paintShader.setTexture("paintnoise", paintNoise);
 		paintShader.setTexture("paintbump", paintBump);
 		
-		glfwSwapBuffers(hl.window);
-		glfwPollEvents();
+		stage.draw();
+		
+		presentFrame();
 	}
 	
 	deinit();

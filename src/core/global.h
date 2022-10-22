@@ -30,11 +30,6 @@
 | without this needing to be hardcoded.
 |______________________________________________*/
 
-#define KEY_IDX 0x000
-#define MOUSE_IDX 0x200
-#define GAMEPAD_IDX 0x210
-#define JOYSTICK_IDX 0x230
-
 /*
 // key binds
 int16 knorth = KEY_W;

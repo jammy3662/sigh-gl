@@ -26,6 +26,11 @@ struct Game
 	
 	Camera sun;
 	Color sunColor;
+	
+	void update()
+	{
+		
+	}
 };
 
 Game gameNew()

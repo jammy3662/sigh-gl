@@ -1,6 +1,6 @@
 #pragma once
 
-#define PATH_DELIM '/'
+#define PATH_DELIMETER '/'
 
 #ifdef _WIN32
 	#include <windows.h>
@@ -9,7 +9,7 @@
 
 	#define DIV 1048576 
 	#define WIDTH 7
-	#define PATH_DELIM '\'
+	#define PATH_DELIMER '\'
 #endif
 
 #ifdef linux

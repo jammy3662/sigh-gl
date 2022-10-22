@@ -2,20 +2,47 @@
 
 TIMEFORMAT=%R
 
-echo ""
+say()
+{
+	echo -e "$@"
+}
 
-echo "Compiling textures..."
+say ""
+
+say "Updating textures..."
+TEXTURES=""
+for i in res/texture/*.png
+do
+	TEXTURES="$TEXTURES $i"
+done
+tcomp res/TEXTURE.c $TEXTURES
+say "Done updating textures.\n"
+
+say "Updating shaders..."
+SHADERS=""
+for i in res/shader/*.fs
+do
+	SHADERS="$SHADERS $i"
+done
+for i in res/shader/*.vs
+do
+	SHADERS="$SHADERS $i"
+done
+scomp res/SHADER.c $SHADERS
+say "Done updating shaders.\n"
+
+say "Compiling textures..."
 TIMEA=$(date +%s%N)
 clang++ -Wno-everything -c res/TEXTURE.c -DHL_COMPILE_RES -o bin/TEXTURE.o
 TIMEB=$(($(date +%s%N)-$TIMEA))
 TIME=$((TIMEB/1000000))
-echo -e "Done compiling textures in ${TIME} ms.\n"
+say "Done compiling textures in ${TIME} ms.\n"
 
-echo "Compiling shaders..."
+say "Compiling shaders..."
 TIMEA=$(date +%s%N)
 clang++ -Wno-everything -c res/SHADER.c -DHL_COMPILE_RES -o bin/SHADER.o
 TIMEB=$(($(date +%s%N)-$TIMEA))
 TIME=$((TIMEB/1000000))
-echo -e "Done compiling shaders in ${TIME} ms.\n"
+say "Done compiling shaders in ${TIME} ms.\n"
 
-echo "Done."
+say "Done."
