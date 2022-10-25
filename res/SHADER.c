@@ -242,11 +242,87 @@ char* painttestfsShaderCode
 #ifndef HL_COMPILE_RES
 extern
 #endif
+char* basevsShaderCode
+#ifdef HL_COMPILE_RES
+= 
+"\
+#version 330\
+\n	\
+\n	layout (location = 0) in vec3 vertexPos;\
+\n	layout (location = 1) in vec3 vertexNormal; \
+\n	layout (location = 2) in vec2 vertexCoord; \
+\n	layout (location = 3) in vec2 vertexCoord2;\
+\n	layout (location = 4) in vec4 vertexColor;\
+\n	\
+\n	out vec4 fragPos;\
+\n	out vec3 fragNormal;\
+\n	out vec2 fragCoord;\
+\n	out vec2 fragCoord2;\
+\n	out vec4 fragColor;\
+\n	\
+\n	uniform mat4 mvp;\
+\n	uniform mat4 modelMatrix;\
+\n	uniform mat4 normalMatrix;\
+\n	uniform mat4 lightMatrix;\
+\n	\
+\n	out vec4 shadowPos;\
+\n	\
+\n	void calcLightSpace()\
+\n	{\
+\n		shadowPos = modelMatrix * lightMatrix * vec4(vertexPos, 1.0);\
+\n	}\
+\n	\
+\n	void main()\
+\n	{\
+\n		 // Send vertex attributes to fragment shader\
+\n		fragPos = modelMatrix * vec4(vertexPos, 1.0);\
+\n		fragCoord = vertexCoord;\
+\n		fragColor = vertexColor;\
+\n		fragNormal = (normalMatrix * vec4(vertexNormal, 1.0)).xyz;\
+\n		\
+\n		// Calculate final vertex position\
+\n		gl_Position = mvp*vec4(vertexPos, 1.0);\
+\n		\
+\n		calcLightSpace();\
+\n	}\
+"
+#endif
+;
+#ifndef HL_COMPILE_RES
+extern
+#endif
+char* depthvsShaderCode
+#ifdef HL_COMPILE_RES
+= 
+"\
+\
+"
+#endif
+;
+#ifndef HL_COMPILE_RES
+extern
+#endif
 char* flyoveroceanvsShaderCode
 #ifdef HL_COMPILE_RES
 = 
 "\
 #version 330\
+\n	\
+\n	layout (location = 0) in vec3 vertexPos;\
+\n	layout (location = 1) in vec3 vertexNormal; \
+\n	layout (location = 2) in vec2 vertexCoord; \
+\n	layout (location = 3) in vec2 vertexCoord2;\
+\n	layout (location = 4) in vec4 vertexColor;\
+\n	\
+\n	out vec4 fragPos;\
+\n	out vec3 fragNormal;\
+\n	out vec2 fragCoord;\
+\n	out vec2 fragCoord2;\
+\n	out vec4 fragColor;\
+\n	\
+\n	uniform mat4 mvp;\
+\n	uniform mat4 modelMatrix;\
+\n	uniform mat4 normalMatrix;\
 \n	\
 \n	// Input vertex attributes\
 \n	in vec3 vertexPosition;\
@@ -296,50 +372,6 @@ char* flyoveroceanvsShaderCode
 \n		\
 \n	    // Calculate final vertex position\
 \n	    gl_Position = mvp*vec4(pos, 1.0);\
-\n	}\
-"
-#endif
-;
-#ifndef HL_COMPILE_RES
-extern
-#endif
-char* painttestvsShaderCode
-#ifdef HL_COMPILE_RES
-= 
-"\
-#version 330\
-\n	\
-\n	// Input vertex attributes\
-\n	in vec3 vertexPosition;\
-\n	in vec2 vertexTexCoord;\
-\n	in vec4 vertexColor;\
-\n	in vec3 vertexNormal;\
-\n	\
-\n	// Input uniform values\
-\n	uniform mat4 mvp;\
-\n	uniform mat4 matModel;\
-\n	uniform mat4 matNormal;\
-\n	uniform mat4 matLight;\
-\n	\
-\n	// Output vertex attributes (to fragment shader)\
-\n	out vec2 fragCoord;\
-\n	out vec4 fragColor;\
-\n	out vec4 fragPos;\
-\n	out vec3 fragNormal;\
-\n	out vec4 shadowPos;\
-\n	\
-\n	void main()\
-\n	{    \
-\n	    // Send vertex attributes to fragment shader\
-\n		fragPos = matModel * vec4(vertexPosition, 1.0);\
-\n		fragCoord = vertexTexCoord;\
-\n		fragColor = vertexColor;\
-\n		fragNormal = normalize(vec3(matNormal*vec4(vertexNormal, 1.0)));\
-\n		\
-\n		shadowPos = matModel * matLight * vec4(vertexPosition, 1.0);\
-\n		\
-\n	    // Calculate final vertex position\
-\n	    gl_Position = mvp*vec4(vertexPosition, 1.0);\
 \n	}\
 "
 #endif

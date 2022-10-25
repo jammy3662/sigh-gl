@@ -15,36 +15,31 @@ int8 running = true;
 int main(int argc, char** argv)
 {	
 	init();
-	openWindow(wwidth, wheight, fwidth, fheight, "sigh " VERSION " " PLATFORM);
+	setFrame(1920, 1080);
+	setWindow(1080, 720);
+	openWindow("sigh " VERSION " " PLATFORM);
 	setFramerate(60);
 	
-	Shader baseShader;
-	baseShader.setName("baseShader");
-	//baseShader.load(basefsShaderCode, basevsShaderCode);
-	
-	Shader paintShader;
+	Shader paintShader = createShader(basevsShaderCode, painttestfsShaderCode);
 	paintShader.setName("paintShader");
-	paintShader.load(painttestvsShaderCode, painttestfsShaderCode);
 	
-	Texture paintNoise;
-	paintNoise.loadImage(paintnoiseImg);
-	paintNoise.load();
+	Texture paintNoise = createTexture(paintnoiseImg);
+	uploadTexture(paintNoise);
 	
-	Texture paintBump;
-	paintBump.loadImage(paintbumpImg);
-	paintBump.load();
+	Texture paintBump = createTexture(paintnoiseImg);
+	uploadTexture(paintBump);
 	
-	Model stage;
-	stage.loadFile("res/mesh/underpass.glb");
+	Model stage = createModel("res/mesh/gltest.glb");
+	
+	Frame testbuffer = createFrame(1, 0, hl.fwidth, hl.fheight);
 	
 	while (running)
 	{
 		if (glfwWindowShouldClose(hl.window)) break;
 		
-		// limit frame rate and track frame duration
-		calculateDelta();
-		if (!frameStep()) continue;
+		if (!shouldRender()) continue;
 		
+		enableFrame(testbuffer);
 		clearFrame(0.1, 0.1, 0.1, 1);
 		
 		useShader(&paintShader);
@@ -52,6 +47,13 @@ int main(int argc, char** argv)
 		paintShader.setTexture("paintbump", paintBump);
 		
 		stage.draw();
+		
+		defaultFrame();
+		
+		// TODO:
+		// draw final screen quad;
+		// this is where post-processing
+		// and scaling and stuff happens
 		
 		presentFrame();
 	}

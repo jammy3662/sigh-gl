@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# get access to some helper functions
+# and shortcuts
+source ~/.bashalias
+
 TIMEFORMAT=%R
 
 say()
@@ -8,15 +12,6 @@ say()
 }
 
 say ""
-
-say "Updating textures..."
-TEXTURES=""
-for i in res/texture/*.png
-do
-	TEXTURES="$TEXTURES $i"
-done
-tcomp res/TEXTURE.c $TEXTURES
-say "Done updating textures.\n"
 
 say "Updating shaders..."
 SHADERS=""
@@ -31,18 +26,33 @@ done
 scomp res/SHADER.c $SHADERS
 say "Done updating shaders.\n"
 
-say "Compiling textures..."
-TIMEA=$(date +%s%N)
-clang++ -Wno-everything -c res/TEXTURE.c -DHL_COMPILE_RES -o bin/TEXTURE.o
-TIMEB=$(($(date +%s%N)-$TIMEA))
-TIME=$((TIMEB/1000000))
-say "Done compiling textures in ${TIME} ms.\n"
+say "Updating textures..."
+TEXTURES=""
+for i in res/texture/*.png
+do
+	TEXTURES="$TEXTURES $i"
+done
+tcomp res/TEXTURE.c $TEXTURES
+say "Done updating textures.\n"
 
-say "Compiling shaders..."
-TIMEA=$(date +%s%N)
-clang++ -Wno-everything -c res/SHADER.c -DHL_COMPILE_RES -o bin/SHADER.o
-TIMEB=$(($(date +%s%N)-$TIMEA))
-TIME=$((TIMEB/1000000))
-say "Done compiling shaders in ${TIME} ms.\n"
+contains s $@; if [[ $? -ne 0 ]]
+then
+	say "Compiling shaders..."
+	TIMEA=$(date +%s%N)
+	clang++ -Wno-everything -c res/SHADER.c -DHL_COMPILE_RES -o bin/SHADER.o
+	TIMEB=$(($(date +%s%N)-$TIMEA))
+	TIME=$((TIMEB/1000000))
+	say "Done compiling shaders in ${TIME} ms.\n"
+fi
+
+contains t $@; if [[ $? -ne 0 ]]
+then
+	say "Compiling textures..."
+	TIMEA=$(date +%s%N)
+	clang++ -Wno-everything -c res/TEXTURE.c -DHL_COMPILE_RES -o bin/TEXTURE.o
+	TIMEB=$(($(date +%s%N)-$TIMEA))
+	TIME=$((TIMEB/1000000))
+	say "Done compiling textures in ${TIME} ms.\n"
+fi
 
 say "Done."
