@@ -1,12 +1,12 @@
 #include "core/defs.h"
 
-#include <libhl/hl.h>
-#include "core/global.h"
-
 // header containing named char*'s to shader code
 #include "../res/SHADER.c"
 // header containing pre-populated Image structs
 #include "../res/TEXTURE.c"
+
+#include <libhl/hl.h>
+#include "core/global.h"
 
 //#include <game/game.h>
 
@@ -19,17 +19,16 @@ int main(int argc, char** argv)
 	setWindow(1080, 720);
 	openWindow("sigh " VERSION " " PLATFORM);
 	setFramerate(60);
+	setup();
 	
 	Shader paintShader = createShader(basevsShaderCode, painttestfsShaderCode);
 	paintShader.setName("paintShader");
 	
-	Texture paintNoise = createTexture(paintnoiseImg);
-	uploadTexture(paintNoise);
+	Texture paintNoise = createTexture(&paintnoiseImg);
 	
-	Texture paintBump = createTexture(paintnoiseImg);
-	uploadTexture(paintBump);
+	Texture paintBump = createTexture(&paintnoiseImg);
 	
-	Model stage = createModel("res/mesh/gltest.glb");
+	Model stage = createModel("res/mesh/underpass.glb");
 	
 	Frame testbuffer = createFrame(1, 0, hl.fwidth, hl.fheight);
 	
@@ -39,7 +38,9 @@ int main(int argc, char** argv)
 		
 		if (!shouldRender()) continue;
 		
-		enableFrame(testbuffer);
+		clearTextures();
+		
+		enableFrame(&testbuffer);
 		clearFrame(0.1, 0.1, 0.1, 1);
 		
 		useShader(&paintShader);
@@ -50,10 +51,15 @@ int main(int argc, char** argv)
 		
 		defaultFrame();
 		
-		// TODO:
+		//
 		// draw final screen quad;
 		// this is where post-processing
 		// and scaling and stuff happens
+		//
+		
+		clearFrame(0,0,0.2,1);
+		//drawRect(0,0, fwidth, fheight, {0.5,0,1,1});
+		drawTexture(testbuffer.color, 0, 0, fwidth/2, fheight/2, {1,1,1,1});
 		
 		presentFrame();
 	}
